@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Wrapper — runs inventory.py using the project venv
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV_PYTHON="$SCRIPT_DIR/../.venv/bin/python3"
+
+if [ ! -f "$VENV_PYTHON" ]; then
+  echo "ERROR: venv not found. Run: bash setup.sh" >&2
+  exit 1
+fi
+
+exec "$VENV_PYTHON" "$SCRIPT_DIR/inventory.py" "$@"
