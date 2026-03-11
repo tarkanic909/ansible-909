@@ -3,16 +3,19 @@
 Dynamic Ansible inventory — reads from Terraform output.
 
 Usage:
-  ansible -i inventory/inventory.py all -m ping
-  ansible-inventory -i inventory/inventory.py --list
+  ansible-inventory --list
+  ansible-inventory --graph
+  ./inventory/inventory.py --list
+  ./inventory/inventory.py --host lab-router1
 """
 
+import argparse
 import json
 import subprocess
 import sys
 from pathlib import Path
 
-TERRAFORM_DIR = Path(__file__).parent.parent.parent / "terraform"
+TERRAFORM_DIR = Path(__file__).parent.parent.parent / "terraform-909"
 
 ANSIBLE_USER = "ansible"
 
@@ -39,6 +42,8 @@ def build_inventory(nodes: dict) -> dict:
     groups = {
         "routers":     [],
         "k3s":         [],
+        "k3s_single":  [],
+        "k3s_cluster": [],
         "k3s_master":  [],
         "k3s_workers": [],
         "as65001":     [],
@@ -46,8 +51,8 @@ def build_inventory(nodes: dict) -> dict:
     }
 
     for name, node in nodes.items():
-        ip   = node["ip"]
-        role = node["role"]
+        ip     = node["ip"]
+        role   = node["role"]
         bgp_as = node["as"]
 
         # Host vars
@@ -61,12 +66,17 @@ def build_inventory(nodes: dict) -> dict:
         # Functional groups
         if role == "router":
             groups["routers"].append(name)
+        elif role == "single":
+            groups["k3s"].append(name)
+            groups["k3s_single"].append(name)
         elif role == "master":
             groups["k3s"].append(name)
             groups["k3s_master"].append(name)
+            groups["k3s_cluster"].append(name)
         elif role == "worker":
             groups["k3s"].append(name)
             groups["k3s_workers"].append(name)
+            groups["k3s_cluster"].append(name)
 
         # AS groups
         if bgp_as == 65001:
@@ -86,6 +96,16 @@ def build_inventory(nodes: dict) -> dict:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--list", action="store_true")
+    parser.add_argument("--host")
+    args = parser.parse_args()
+
     nodes = get_terraform_output()
     inventory = build_inventory(nodes)
-    print(json.dumps(inventory, indent=2))
+
+    if args.host:
+        print(json.dumps(inventory["_meta"]["hostvars"].get(args.host, {}), indent=2))
+    else:
+        # --list alebo bez argumentu — vrati cely inventory
+        print(json.dumps(inventory, indent=2))
