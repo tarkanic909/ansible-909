@@ -51,16 +51,22 @@ def build_inventory(nodes: dict) -> dict:
     }
 
     for name, node in nodes.items():
-        ip     = node["ip"]
+        ip     = node["mgmt_ip"]
         role   = node["role"]
-        bgp_as = node["as"]
+        bgp_as = node["bgp_as"]
 
         # Host vars
         inventory["_meta"]["hostvars"][name] = {
-            "ansible_host": ip,
-            "ansible_user": ANSIBLE_USER,
-            "bgp_as":       bgp_as,
-            "role":         role,
+            "ansible_host":  ip,
+            "ansible_user":  ANSIBLE_USER,
+            "lan_ip":        node["lan_ip"],
+            "lan_cidr":      node["lan_cidr"],
+            "lan_network":   node["lan_network"],
+            "interlink_ip":  node["interlink_ip"],
+            "bgp_as":        bgp_as,
+            "bgp_neighbor_ip":        node["bgp_neighbor_ip"],
+            "bgp_neighbor_as":        node["bgp_neighbor_as"],
+            "role":          role,
         }
 
         # Functional groups
