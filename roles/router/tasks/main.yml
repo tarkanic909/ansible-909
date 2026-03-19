@@ -1,0 +1,35 @@
+---
+- name: Setup ipv4 forwarding
+  sysctl:
+    name: net.ipv4.conf.all.forwarding
+    value: '1'
+    state: present
+    reload: yes
+
+- name: Install frr packages
+  apt:
+    name: "{{ frr_packages }}"
+    state: present
+
+- name: Enable bgpd daemon
+  ansible.builtin.replace:
+    path: /etc/frr/daemons
+    regexp: '^bgpd=no'
+    replace: 'bgpd=yes'
+  notify: restart frr
+
+- name: Generate frr configuration file
+  template:
+    src: frr.conf.j2
+    dest: /etc/frr/frr.conf
+  notify: restart frr
+
+- name: Enable frr service
+  systemd:
+    name: frr
+    enabled: yes
+
+- name: Ensure frr is running
+  systemd:
+    name: frr
+    state: started
