@@ -1,5 +1,5 @@
 ---
-- name: restart frr
+- name: reload frr
   ansible.builtin.systemd:
     name: frr
-    state: restarted
+    state: reloaded
