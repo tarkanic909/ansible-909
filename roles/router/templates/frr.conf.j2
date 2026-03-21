@@ -1,0 +1,17 @@
+route-map IMPORT-FROM-B permit 10
+
+route-map EXPORT-TO-B permit 10
+
+router bgp {{ bgp_as }}
+  bgp router-id {{ interlink_ip }}
+
+  ! Define the neighbor (eBGP peer on Router B)
+  neighbor {{ bgp_neighbor_ip }} remote-as {{ bgp_neighbor_as }}
+
+  ! Configure what to advertise in IPv4 unicast address family
+  address-family ipv4 unicast
+    ! Advertise Router A's loopback network
+    network {{ lan_network }}/{{ lan_cidr.split('/')[1] }}
+    neighbor {{ bgp_neighbor_ip }} route-map EXPORT-TO-B out
+    neighbor {{ bgp_neighbor_ip }} route-map IMPORT-FROM-B in
+  exit-address-family
