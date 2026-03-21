@@ -1,10 +1,5 @@
-- name: Common setup
-  hosts: all
-  roles:
-    - common
-
+---
 - name: Router setup
   hosts: routers
   roles:
     - router
-
