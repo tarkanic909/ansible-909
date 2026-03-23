@@ -1,0 +1,6 @@
+---
+k3s_version: "v1.32.3+k3s1"
+k3s_install_url: "https://get.k3s.io"
+k3s_server_location: "/var/lib/rancher/k3s"
+systemd_dir: "/etc/systemd/system"
+k3s_exec: "agent"

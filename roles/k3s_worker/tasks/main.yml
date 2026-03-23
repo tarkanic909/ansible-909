@@ -1,0 +1,18 @@
+---
+- name: Install k3s
+  ansible.builtin.import_role:
+    name: k3s_install
+
+- name: Create k3s agent service file
+  ansible.builtin.template: 
+    src: k3s-agent.service.env.j2
+    dest: /etc/systemd/system/k3s-agent.service.env
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure k3s service is enabled and started
+  ansible.builtin.systemd:
+    name: k3s-agent
+    state: started
+    enabled: true
