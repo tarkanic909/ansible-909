@@ -74,7 +74,6 @@ ansible all -m ping
 | Role | Description |
 |------|-------------|
 | `router` | FRR installation, BGP configuration, reload handler |
-| `k3s_install` | Downloads and installs K3s binary (shared by single/master/worker) |
-| `k3s_single` | Single-node K3s cluster setup |
-| `k3s_master` | K3s master setup, extracts join token |
+| `k3s_install` | Downloads and installs K3s binary (shared by master/worker) |
+| `k3s_master` | K3s server setup; set `k3s_expose_token: true` when workers will join |
 | `k3s_worker` | K3s agent setup, joins master via LAN IP |
