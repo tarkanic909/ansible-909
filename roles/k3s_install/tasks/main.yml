@@ -22,7 +22,7 @@
     k3s_version not in (k3s_version_check.stdout | default(''))
 
 - name: Install k3s
-  ansible.builtin.command: 
+  ansible.builtin.command:
     cmd: /usr/local/bin/k3s-install.sh
   environment:
     INSTALL_K3S_SKIP_START: "true"
@@ -32,3 +32,4 @@
   when: >
     not k3s_installed.stat.exists or
     k3s_version not in (k3s_version_check.stdout | default(''))
+  notify: restart k3s
