@@ -71,8 +71,10 @@ ansible all -m ping
 
 ## Roles
 
-| Role | Status | Description |
-|------|--------|-------------|
-| `common` | in progress | Base packages and configuration |
-| `router` | planned | BGP routing (FRR) |
-| `k3s` | planned | K3s cluster installation |
+| Role | Description |
+|------|-------------|
+| `router` | FRR installation, BGP configuration, reload handler |
+| `k3s_install` | Downloads and installs K3s binary (shared by single/master/worker) |
+| `k3s_single` | Single-node K3s cluster setup |
+| `k3s_master` | K3s master setup, extracts join token |
+| `k3s_worker` | K3s agent setup, joins master via LAN IP |

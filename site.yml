@@ -3,3 +3,20 @@
   hosts: routers
   roles:
     - router
+
+- name: k3s single node setup
+  hosts: lab-k3s-single
+  roles:
+    - k3s_master
+
+- name: k3s master setup
+  hosts: lab-k3s-master
+  vars:
+    k3s_expose_token: true
+  roles:
+    - k3s_master
+
+- name: k3s worker setup
+  hosts: k3s_workers
+  roles:
+    - k3s_worker
