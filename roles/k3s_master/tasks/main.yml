@@ -3,6 +3,14 @@
   ansible.builtin.include_role:
     name: k3s_install
 
+- name: Ensure k3s config directory exists
+  ansible.builtin.file:
+    path: /etc/rancher/k3s
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
 - name: Create k3s config file
   ansible.builtin.template:
     src: k3s-config.yaml.j2
