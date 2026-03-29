@@ -18,6 +18,7 @@
     owner: root
     group: root
     mode: '0644'
+  notify: restart k3s
 
 - name: Ensure k3s service is enabled and started
   ansible.builtin.systemd:

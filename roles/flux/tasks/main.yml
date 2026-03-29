@@ -18,6 +18,17 @@
     msg: "GITLAB_TOKEN environment variable is not set. Run: export GITLAB_TOKEN=your-token"
   when: lookup('env', 'GITLAB_TOKEN') == ''
 
+- name: Wait for Kubernetes API
+  ansible.builtin.command:
+    cmd: kubectl get nodes
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: k3s_ready
+  retries: 20
+  delay: 5
+  until: k3s_ready.rc == 0
+  changed_when: false
+
 - name: Bootstrap Flux
   when: flux_check.rc != 0
   ansible.builtin.command:
