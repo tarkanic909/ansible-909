@@ -1,0 +1,33 @@
+- name: Install Flux CLI
+  ansible.builtin.shell:
+    cmd: curl -s https://fluxcd.io/install.sh | bash
+  args:
+    creates: /usr/local/bin/flux
+
+- name: Check if Flux is bootstrapped
+  ansible.builtin.command:
+    cmd: flux check
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: flux_check
+  changed_when: false
+  failed_when: false
+
+- name: Check GITLAB_TOKEN for flux is set
+  ansible.builtin.fail:
+    msg: "GITLAB_TOKEN environment variable is not set. Run: export GITLAB_TOKEN=your-token"
+  when: lookup('env', 'GITLAB_TOKEN') == ''
+
+- name: Bootstrap Flux
+  when: flux_check.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      flux bootstrap gitlab
+      --owner=lab-909
+      --repository=flux-909
+      --branch=main
+      --path=clusters/lab-k3s-master
+      --token-auth
+  environment:
+    GITLAB_TOKEN: "{{ lookup('env', 'GITLAB_TOKEN') }}"
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
