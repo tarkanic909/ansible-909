@@ -4,20 +4,6 @@
   args:
     creates: /usr/local/bin/flux
 
-- name: Check if Flux is bootstrapped
-  ansible.builtin.command:
-    cmd: flux check
-  environment:
-    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-  register: flux_check
-  changed_when: false
-  failed_when: false
-
-- name: Check GITLAB_TOKEN for flux is set
-  ansible.builtin.fail:
-    msg: "GITLAB_TOKEN environment variable is not set. Run: export GITLAB_TOKEN=your-token"
-  when: lookup('env', 'GITLAB_TOKEN') == ''
-
 - name: Wait for Kubernetes API
   ansible.builtin.command:
     cmd: kubectl get nodes
@@ -28,6 +14,22 @@
   delay: 5
   until: k3s_ready.rc == 0
   changed_when: false
+
+- name: Check if Flux is bootstrapped
+  ansible.builtin.command:
+    cmd: kubectl get ns flux-system
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: flux_check
+  changed_when: false
+  failed_when: false
+
+- name: Check GITLAB_TOKEN for flux is set
+  ansible.builtin.fail:
+    msg: "GITLAB_TOKEN environment variable is not set. Run: export GITLAB_TOKEN=your-token"
+  when:
+    - flux_check.rc != 0
+    - lookup('env', 'GITLAB_TOKEN') == ''
 
 - name: Bootstrap Flux
   when: flux_check.rc != 0

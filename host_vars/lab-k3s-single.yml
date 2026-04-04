@@ -1,0 +1,2 @@
+gitops_tool: argocd
+k3s_expose_token: false

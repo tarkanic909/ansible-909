@@ -1,1 +1,2 @@
 gitops_tool: flux
+k3s_expose_token: true

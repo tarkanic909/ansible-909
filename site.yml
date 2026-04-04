@@ -4,15 +4,8 @@
   roles:
     - router
 
-- name: k3s single node setup
-  hosts: lab-k3s-single
-  roles:
-    - k3s_master
-
 - name: Bootstrap k3s masters
   hosts: k3s_masters
-  vars:
-    k3s_expose_token: true
   roles:
     - k3s_master
     - role: flux
