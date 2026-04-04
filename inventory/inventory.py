@@ -45,6 +45,7 @@ def build_inventory(nodes: dict) -> dict:
         "k3s_single":  [],
         "k3s_cluster": [],
         "k3s_master":  [],
+        "k3s_masters": [],
         "k3s_workers": [],
         "as65001":     [],
         "as65002":     [],
@@ -75,9 +76,11 @@ def build_inventory(nodes: dict) -> dict:
         elif role == "single":
             groups["k3s"].append(name)
             groups["k3s_single"].append(name)
+            groups["k3s_masters"].append(name)
         elif role == "master":
             groups["k3s"].append(name)
             groups["k3s_master"].append(name)
+            groups["k3s_masters"].append(name)
             groups["k3s_cluster"].append(name)
         elif role == "worker":
             groups["k3s"].append(name)

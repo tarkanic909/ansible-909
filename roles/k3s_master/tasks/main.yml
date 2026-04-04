@@ -43,5 +43,5 @@
       ansible.builtin.set_fact:
         k3s_join_token: "{{ k3s_join_token.stdout }}"
 
-- name: Flush handlers before Flux bootstrap
+- name: Flush pending k3s handlers
   meta: flush_handlers
